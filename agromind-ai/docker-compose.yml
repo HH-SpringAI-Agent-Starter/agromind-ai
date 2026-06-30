@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: agromind-postgres
+    environment:
+      POSTGRES_DB: agromind
+      POSTGRES_USER: agro
+      POSTGRES_PASSWORD: agro
+    ports:
+      - "5432:5432"
+    volumes:
+      - agromind_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agro -d agromind"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: agromind-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - agromind_ollama:/root/.ollama
+    profiles:
+      - local-llm
+
+volumes:
+  agromind_pgdata:
+  agromind_ollama:

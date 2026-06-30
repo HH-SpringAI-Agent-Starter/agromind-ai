@@ -1,0 +1,40 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: agromind-ai
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/agromind}
+    username: ${POSTGRES_USER:agro}
+    password: ${POSTGRES_PASSWORD:agro}
+  ai:
+    model:
+      chat: ollama
+      embedding: ollama
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        model: ${OLLAMA_CHAT_MODEL:qwen2.5:7b}
+        temperature: ${OLLAMA_CHAT_TEMPERATURE:0.2}
+      embedding:
+        model: ${OLLAMA_EMBEDDING_MODEL:mxbai-embed-large}
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        table-name: agro_knowledge_vectors
+        max-document-batch-size: 1000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+agromind:
+  knowledge:
+    auto-ingest: true
+    chunk-size: 1200
+    chunk-overlap: 160
